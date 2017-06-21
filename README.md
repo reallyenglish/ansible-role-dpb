@@ -1,6 +1,6 @@
 # ansible-role-dpb
 
-A brief description of the role goes here.
+Creates `chroot` for bulk package build and configures `dpb` build environment.
 
 # Requirements
 
@@ -8,9 +8,36 @@ None
 
 # Role Variables
 
-| variable | description | default |
+| Variable | Description | Default |
 |----------|-------------|---------|
+| `dpb_build_user` | build user | `_pbuild` |
+| `dpb_build_group` | build group | `{{ dpb_build_user }}` |
+| `dpb_fetch_user` | fetch user | `_pfetch` |
+| `dpb_fetch_group` | fetch group | `{{ dpb_fetch_user }}` |
+| `dpb_conf_dir` | path to directory to keep configuration files | `/etc/dpb` |
+| `dpb_conf_file` | files that contains a list of packages to build | `{{ dpb_conf_dir }}/packages` |
+| `dpb_proot_conf_file` | path to configuration file of `proot` | `{{ dpb_conf_dir }}/proot.conf` |
+| `dpb_proot_chroot` | path to `chroot(2)` directory | `/usr/local/build` |
+| `dpb_proot_config` | dict of `proot` configuration | see below |
 
+## `dpb_proot_config`
+
+This is a dict for `proot`. Each key is described in
+[`proot(1)`](http://man.openbsd.org/proot) man page.
+
+Values are string except `actions`. `actions` is a list of actions.
+
+```yaml
+dpb_proot_config:
+  chroot: "{{ dpb_proot_chroot }}"
+  BUILD_USER: "{{ dpb_build_user }}"
+  FETCH_USER: "{{ dpb_fetch_user }}"
+  chown_all: 1
+  actions:
+    - unpopulate_light
+    - resolve
+    - copy_ports
+```
 
 # Dependencies
 
@@ -19,6 +46,14 @@ None
 # Example Playbook
 
 ```yaml
+- hosts: localhost
+  roles:
+    - ansible-role-dpb
+  vars:
+    dpb_packages:
+      - net/rsync
+      - sysutils/ansible
+      - net/curl
 ```
 
 # License

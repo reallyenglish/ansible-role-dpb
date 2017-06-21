@@ -1,6 +1,4 @@
 ---
 
-- name: Restart dpb
-  service:
-    name: dpb
-    state: restarted
+- name: Update ports
+  shell: "cd /usr; cvs -qd anoncvs@anoncvs.ca.openbsd.org:/cvs get -rOPENBSD_6_0 -P ports"
