@@ -2,6 +2,13 @@
 
 Creates `chroot` for bulk package build and configures `dpb` build environment.
 
+At the initial play, the ports tree is updated to the latest in a tag. It is
+user's responsibility to update the tree afterwards. A handler is provided to
+update the ports tree in host and sync files in `chroot`.
+
+`cvs(1)` is used in the role to retrieve and update the ports tree. However, it
+is subject to change in the future, and other version management might be used.
+
 # Requirements
 
 None
