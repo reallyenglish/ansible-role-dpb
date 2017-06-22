@@ -13,7 +13,6 @@ packages_to_build = [
   "net/curl"
 ]
 chroot_dir = "/usr/local/build"
-chroot_device = "/dev/wd0h"
 chroot_mount_point = "/usr/local"
 
 describe file(config_dir) do
@@ -117,7 +116,7 @@ end
 describe command("mount") do
   its(:exit_status) { should eq 0 }
   its(:stderr) { should eq "" }
-  its(:stdout) { should match(/#{Regexp.escape(chroot_device)}\s+on\s+#{Regexp.escape(chroot_mount_point)}\s+type\s+ffs\s+\(local,\s+wxallowed\)$/) }
+  its(:stdout) { should match(/#{Regexp.escape("/dev/")}[ws]d0h\s+on\s+#{Regexp.escape(chroot_mount_point)}\s+type\s+ffs\s+\(local,\s+wxallowed\)$/) }
 end
 
 # build rsync only as the target of the test is dpb. any package should work
