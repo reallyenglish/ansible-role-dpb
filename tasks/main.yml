@@ -3,6 +3,36 @@
 
 - include_vars: "{{ ansible_os_family }}.yml"
 
+- name: Get release version
+  command: uname -r
+  register: register_release_version
+  changed_when: false
+
+- set_fact:
+    dpb_release: "{{ register_release_version.stdout }}" # x.y
+
+- name: Get release in short form
+  shell: uname -r | cut -c 1,3
+  register: register_release_version_short
+  changed_when: false
+
+- set_fact:
+    dpb_release_short: "{{ register_release_version_short.stdout }}" # xy
+
+- name: Get architecture
+  command: uname -p
+  register: register_arch
+  changed_when: false
+
+- set_fact:
+    dpb_arch: "{{ register_arch.stdout }}"
+
+- set_fact:
+    dpb_cache_release_dir: "{{ dpb_cache_directory }}/{{ dpb_release }}"
+
+- set_fact:
+    dpb_cache_sets_dir: "{{ dpb_cache_release_dir }}/{{ dpb_arch }}"
+
 - include: "install-{{ ansible_os_family }}.yml"
 
 # Unset "nodev" mount(8) option if /usr/local is mounted with the option before
@@ -10,13 +40,12 @@
 - name: Get mount option of /usr/local
   # translation:
   #
-  # * get `mount(8)` output
   # * remove unnecessary lines starting with '#'
   # * select an entry with mount point == "/usr/local"
   # * remove everything other than options
   #
   # the result is "opt1,opt2"
-  shell: "mount | grep -v '^#' | awk '{if ($3 == \"/usr/local\") { print $0 }}' | sed -e 's/^.*(//' -e 's/)$//' -e 's/[ ]//g'"
+  shell: "mount | awk '{if ($3 == \"/usr/local\") { print $0 }}' | sed -e 's/^.*(//' -e 's/)$//' -e 's/[ ]//g'"
   register: register_mount_options
   changed_when: false
 

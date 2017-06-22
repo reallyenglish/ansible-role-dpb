@@ -16,6 +16,11 @@ None
 | `dpb_fetch_group` | fetch group | `{{ dpb_fetch_user }}` |
 | `dpb_conf_dir` | path to directory to keep configuration files | `/etc/dpb` |
 | `dpb_conf_file` | files that contains a list of packages to build | `{{ dpb_conf_dir }}/packages` |
+| `dpb_cache_directory` | path to cache directory where sets and ports file are kept | `/var/cache/dpb` |
+| `dpb_sets` | list of necessary sets | `["comp", "xbase", "xfont", "xshare"]` |
+| `dpb_ftp_mirror_url_base` | string of `scheme://` + `hostname` | `http://ftp.openbsd.org` |
+| `dpb_ftp_mirror_url_path` | path to the mirror root directory | `/pub/OpenBSD` |
+| `dpb_signify_key_dir` | path to directory where public keys are kept | `/etc/signify` |
 | `dpb_proot_conf_file` | path to configuration file of `proot` | `{{ dpb_conf_dir }}/proot.conf` |
 | `dpb_proot_chroot` | path to `chroot(2)` directory | `/usr/local/build` |
 | `dpb_proot_config` | dict of `proot` configuration | see below |

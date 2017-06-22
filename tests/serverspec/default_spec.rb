@@ -14,6 +14,19 @@ packages_to_build = [
 ]
 chroot_dir = "/usr/local/build"
 chroot_mount_point = "/usr/local"
+cache_dir = "/var/cache/dpb"
+arch = "amd64"
+release = Specinfra.backend.run_command("uname -r").stdout.strip # x.y
+release_short_form = Specinfra.backend.run_command("uname -r | cut -c 1,3").stdout.strip # xy
+release_dir = "#{cache_dir}/#{release}"
+sets_dir = "#{release_dir}/#{arch}"
+sets = [
+  "comp#{release_short_form}.tgz",
+  "xbase#{release_short_form}.tgz",
+  "xfont#{release_short_form}.tgz",
+  "xshare#{release_short_form}.tgz",
+]
+key = "/etc/signify/openbsd-#{release_short_form}-base.pub"
 
 describe file(config_dir) do
   it { should exist }
@@ -57,6 +70,70 @@ describe file("/usr/local/bin/proot") do
   it { should exist }
   it { should be_symlink }
   it { should be_linked_to "/usr/ports/infrastructure/bin/proot" }
+end
+
+[ cache_dir, release_dir, sets_dir ].each do |d|
+  describe file(d) do
+    it { should exist }
+    it { should be_directory }
+    it { should be_mode 755 }
+    it { should be_owned_by "root" }
+    it { should be_grouped_into "wheel" }
+  end
+end
+
+[ "SHA256.sig", "ports.tar.gz" ].each do |f|
+  describe file("#{release_dir}/#{f}") do
+    it { should exist }
+    it { should be_file }
+    it { should be_mode 644 }
+    it { should be_owned_by "root" }
+    it { should be_grouped_into "wheel" }
+  end
+end
+
+describe command("cd #{release_dir} && signify -C -p #{key} -x SHA256.sig ports.tar.gz") do
+  its(:exit_status) { should eq 0 }
+  its(:stderr) { should eq "" }
+end
+
+sets.each do |s|
+  describe file("#{sets_dir}/#{s}") do
+    it { should exist }
+    it { should be_file }
+    it { should be_mode 644 }
+    it { should be_owned_by "root" }
+    it { should be_grouped_into "wheel" }
+  end
+end
+
+describe file("#{sets_dir}/SHA256.sig") do
+  it { should exist }
+  it { should be_file }
+  it { should be_mode 644 }
+  it { should be_owned_by "root" }
+  it { should be_grouped_into "wheel" }
+end
+
+sets.each do |s|
+  describe command("cd #{sets_dir} && signify -C -p #{key} -x SHA256.sig #{s}") do
+    its(:exit_status) { should eq 0 }
+    its(:stderr) { should eq "" }
+  end
+end
+
+[
+  "/usr/bin/cc",
+  "/usr/X11R6/bin/xdm",
+  "/usr/X11R6/lib/X11/fonts/TTF/DejaVuSansMono.ttf",
+  "/usr/X11R6/bin/startx"
+].each do |f|
+  describe file(f) do
+    it { should exist }
+    it { should be_file }
+    it { should be_owned_by "root" }
+    it { should be_grouped_into f == "/usr/bin/cc" ? "bin" : "wheel" }
+  end
 end
 
 ["", chroot_dir].each do |root|
