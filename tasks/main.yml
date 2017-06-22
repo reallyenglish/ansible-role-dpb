@@ -3,6 +3,12 @@
 
 - include_vars: "{{ ansible_os_family }}.yml"
 
+- assert:
+    msg: dpb_cvsroot must not be empty
+    that:
+      - dpb_cvsroot is defined
+      - dpb_cvsroot | length > 0
+
 - name: Get release version
   command: uname -r
   register: register_release_version
@@ -26,6 +32,18 @@
 
 - set_fact:
     dpb_arch: "{{ register_arch.stdout }}"
+
+- set_fact:
+    dpb_cvs_tag_default: "OPENBSD_{{ dpb_release.split('.') | join('_') }}"
+
+- set_fact:
+    dpb_cvs_tag_merged: "{% if dpb_cvs_tag is defined and dpb_cvs_tag | length > 0 %}{{ dpb_cvs_tag }}{% else %}{{ dpb_cvs_tag_default }}{% endif %}"
+
+- assert:
+    msg: "[BUG] dpb_cvs_tag_merged is empty"
+    that:
+      - dpb_cvs_tag_merged is defined
+      - dpb_cvs_tag_merged | length > 0
 
 - set_fact:
     dpb_cache_release_dir: "{{ dpb_cache_directory }}/{{ dpb_release }}"

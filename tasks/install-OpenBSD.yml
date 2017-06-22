@@ -48,7 +48,7 @@
   # here because the repository does not have tags, but only HEAD. HEAD can only
   # be built on -current. To support git repository, one must convert a tagged
   # CVS branch to a git branch, and tag it.
-  command: cvs -qd anoncvs@anoncvs.ca.openbsd.org:/cvs get -rOPENBSD_6_0 -P ports
+  command: cvs -qd {{ dpb_cvsroot }} get -r{{ dpb_cvs_tag_merged }} -P ports
   args:
     chdir: /usr
   when:

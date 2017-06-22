@@ -2,6 +2,7 @@
   roles:
     - ansible-role-dpb
   vars:
+    dpb_cvsroot: anoncvs@anoncvs.ca.openbsd.org:/cvs
     dpb_packages:
       - net/rsync
       - sysutils/ansible
