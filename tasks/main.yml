@@ -17,7 +17,7 @@
   #
   # the result is "opt1,opt2"
   shell: "mount | grep -v '^#' | awk '{if ($3 == \"/usr/local\") { print $0 }}' | sed -e 's/^.*(//' -e 's/)$//' -e 's/[ ]//g'"
-  register: register_mount_grep_awk
+  register: register_mount_options
   changed_when: false
 
 - set_fact:
@@ -32,32 +32,32 @@
   # "Error mounting /usr/local: mount_ffs: -o remount: option not supported"
   mount:
     state: present
-    opts: "{{ register_mount_grep_awk.stdout.split(',') | reject('equalto', 'nodev') | join(',') }}"
+    opts: "{{ register_mount_options.stdout.split(',') | reject('equalto', 'nodev') | join(',') }}"
     name: /usr/local
     fstype: ffs
     src: "{{ dpb_mount_device_uuid }}"
   register: mount_usr_local
   when:
     # run the task when /usr/local is mounted with "nodev"
-    - register_mount_grep_awk.stdout.find('nodev') >= 0
+    - register_mount_options.stdout.find('nodev') >= 0
 
 - name: Re-mount /usr/local
   # '-u' does not change options other than one specified with "-o". other
   # options are left intact.
   command: mount -u -o dev /usr/local
   when:
-    - register_mount_grep_awk.stdout.find('nodev') >= 0
+    - register_mount_options.stdout.find('nodev') >= 0
 
 - name: Get mount option of /usr/local
   # get the options again to make sure /usr/local is mounted without "nodev"
   shell: "mount | grep -v '^#' | awk '{if ($3 == \"/usr/local\") { print $0 }}' | sed -e 's/^.*(//' -e 's/)$//' -e 's/,[ ]/ /g'"
-  register: register_mount_grep_awk
+  register: register_mount_options
   changed_when: false
 
 - assert:
     # this time, /usr/local should be mounted without "nodev"
     that:
-      - register_mount_grep_awk.stdout.find('nodev') < 0
+      - register_mount_options.stdout.find('nodev') < 0
 
 - name: Create dpb_conf_dir
   file:
