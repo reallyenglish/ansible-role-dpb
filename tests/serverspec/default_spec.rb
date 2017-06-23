@@ -24,7 +24,7 @@ sets = [
   "comp#{release_short_form}.tgz",
   "xbase#{release_short_form}.tgz",
   "xfont#{release_short_form}.tgz",
-  "xshare#{release_short_form}.tgz",
+  "xshare#{release_short_form}.tgz"
 ]
 key = "/etc/signify/openbsd-#{release_short_form}-base.pub"
 
@@ -72,7 +72,7 @@ describe file("/usr/local/bin/proot") do
   it { should be_linked_to "/usr/ports/infrastructure/bin/proot" }
 end
 
-[ cache_dir, release_dir, sets_dir ].each do |d|
+[cache_dir, release_dir, sets_dir].each do |d|
   describe file(d) do
     it { should exist }
     it { should be_directory }
@@ -82,7 +82,7 @@ end
   end
 end
 
-[ "SHA256.sig", "ports.tar.gz" ].each do |f|
+["SHA256.sig", "ports.tar.gz"].each do |f|
   describe file("#{release_dir}/#{f}") do
     it { should exist }
     it { should be_file }
