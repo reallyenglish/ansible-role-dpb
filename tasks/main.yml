@@ -56,14 +56,7 @@
 # Unset "nodev" mount(8) option if /usr/local is mounted with the option before
 # creating chroot because, inside of chroot, device nodes must be created.
 - name: Get mount option of /usr/local
-  # translation:
-  #
-  # * remove unnecessary lines starting with '#'
-  # * select an entry with mount point == "/usr/local"
-  # * remove everything other than options
-  #
-  # the result is "opt1,opt2"
-  shell: "mount | awk '{if ($3 == \"/usr/local\") { print $0 }}' | sed -e 's/^.*(//' -e 's/)$//' -e 's/[ ]//g'"
+  command: "mount_option_of /usr/local"
   register: register_mount_options
   changed_when: false
 
@@ -97,7 +90,7 @@
 
 - name: Get mount option of /usr/local
   # get the options again to make sure /usr/local is mounted without "nodev"
-  shell: "mount | grep -v '^#' | awk '{if ($3 == \"/usr/local\") { print $0 }}' | sed -e 's/^.*(//' -e 's/)$//' -e 's/,[ ]/ /g'"
+  command: "mount_option_of /usr/local"
   register: register_mount_options
   changed_when: false
 

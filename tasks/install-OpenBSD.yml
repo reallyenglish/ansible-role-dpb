@@ -1,5 +1,11 @@
 ---
 
+- name: Copy mount_option_of.py
+  copy:
+    src: mount_option_of.py
+    dest: /usr/local/bin/mount_option_of
+    mode: 0755
+
 - name: Create cache directory
   file:
     path: "{{ dpb_cache_release_dir }}"
