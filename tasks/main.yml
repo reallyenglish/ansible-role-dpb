@@ -11,8 +11,9 @@
 
 - name: Get release version
   # XXX like any other facts, ansible_distribution_release has never been
-  # officially defined. its definition varies on platforms. the command below
-  # to get version is clear to everyone and will not break.
+  # officially defined. its definition varies on platforms. the command below,
+  # taaken from the OpenBSD FAQ to get version is clear to everyone and will
+  # not break
   command: uname -r
   register: register_release_version
   changed_when: false
