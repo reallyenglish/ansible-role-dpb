@@ -31,8 +31,9 @@ None
 | `dpb_cvsroot` | mandatory `CVSROOT` string | `""` |
 | `dpb_cvs_tag` | optional CVS tag. when empty, appropriate default will be set (`OPENBSD_6_0` if the release version is 6.0) | `""` |
 | `dpb_proot_conf_file` | path to configuration file of `proot` | `{{ dpb_conf_dir }}/proot.conf` |
-| `dpb_proot_chroot` | path to `chroot(2)` directory | `/usr/local/build` |
+| `dpb_proot_chroot` | path to `chroot(2)` directory | `""` |
 | `dpb_proot_config` | dict of `proot` configuration | see below |
+| `dpb_remove_nodev_mount_option` | if `true` and the mount point of `dpb_proot_chroot` is mounted with `nodev`, remove `nodev` mount option | `no` |
 
 ## `dpb_proot_config`
 
@@ -52,6 +53,18 @@ dpb_proot_config:
     - resolve
     - copy_ports
 ```
+
+## `dpb_proot_chroot` and `dpb_remove_nodev_mount_option`
+
+It is generally, and strongly, recommended to provide a dedicated partition for
+`dpb_proot_chroot` without `nodev` option and to set
+`dpb_remove_nodev_mount_option` to `no`, which is the default (the chroot needs
+device nodes).
+
+When `dpb_remove_nodev_mount_option` is set to `yes` and the mount point of
+`dpb_proot_chroot` is mounted with `nodev`, the partition will be re-mounted
+without `nodev` and `fstab(5)` is modified. This affects all the
+sub-directories of the mount point.
 
 # Dependencies
 
