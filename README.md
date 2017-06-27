@@ -31,7 +31,7 @@ None
 | `dpb_cvsroot` | mandatory `CVSROOT` string | `""` |
 | `dpb_cvs_tag` | optional CVS tag. when empty, appropriate default will be set (`OPENBSD_6_0` if the release version is 6.0) | `""` |
 | `dpb_proot_conf_file` | path to configuration file of `proot` | `{{ dpb_conf_dir }}/proot.conf` |
-| `dpb_proot_chroot` | path to `chroot(2)` directory | `""` |
+| `dpb_proot_chroot` | mandatory path to `chroot(2)` directory | `""` |
 | `dpb_proot_config` | dict of `proot` configuration | see below |
 | `dpb_remove_nodev_mount_option` | if `true` and the mount point of `dpb_proot_chroot` is mounted with `nodev`, remove `nodev` mount option | `no` |
 
