@@ -13,4 +13,6 @@
       - net/rsync
       - sysutils/ansible
       - net/curl
+    # XXX this is not recommended but the box does not have additional
+    # partition.
     dpb_remove_nodev_mount_option: yes
