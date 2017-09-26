@@ -59,9 +59,10 @@ dpb_proot_config:
   mkconf_tail: /dev/null
 ```
 
-Note that the role assumes that `/etc/mk.conf` exists in the `chroot` after
-play. Do not omit `mkconf_tail`, or play would fail. Even if you do not need
-`mkconf_tail`, set the variable to `/dev/null`.
+Do not omit `mkconf_tail` when `mkconf_lines` is set. `proot` has a bug and
+`mk.conf` will not be created under certain conditions. See comments in Example
+Playbook. Set the variable to `/dev/null` even when you do not use it just in
+case.
 
 ## `dpb_proot_chroot` and `dpb_remove_nodev_mount_option`
 
