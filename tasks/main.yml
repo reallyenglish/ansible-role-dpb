@@ -86,8 +86,8 @@
   template:
     src: proot.conf.j2
     dest: "{{ dpb_proot_conf_file }}"
-  notifies:
-    - Update chroot
+    notifies:
+      - Update chroot
 
 - name: Create chroot
   command: "proot -c {{ dpb_proot_conf_file }}"
